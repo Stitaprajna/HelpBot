@@ -88,25 +88,38 @@ class chatApplication:
             return
         self.msg_entry.delete(0,END)
         msg1 = f'{sender}: {msg}\n\n'
-        self.save1 = msg1
+        #self.save1 = msg1
+        self.save1 = msg
         self.text_widget.configure(state=NORMAL)
         self.text_widget.insert(END,msg1)
         self.text_widget.configure(cursor='arrow',state=DISABLED)
 
         msg2 = f'Bot: {get_response(msg)}\n\n'
-        self.save=msg2
+        #self.save=msg2
+        self.save=get_response(msg)
         self.text_widget.configure(state=NORMAL)
         self.text_widget.insert(END,msg2)
         self.text_widget.configure(cursor='arrow',state=DISABLED)
         self.text_widget.see(END)
 
-        # Saving the data in json 
+        ### Saving the data in json 
         with open("user_data.json", "r") as f:  # reading a file
-            data = json.load(f)
+            try:
+                data = json.load(f)   
+                    
+            except json.decoder.JSONDecodeError:
+                data = {}
+                data["userdata"] = []
 
-        
-        data.append(self.save1[:-2])
-        data.append(self.save[:-2])
+
+
+        data['userdata'].append(
+            {
+               'You': self.save1,
+              'Bot': self.save
+                                }
+            )  	    
+                		
         
         with open("user_data.json", "w") as f:
             json.dump(data, f,indent=4)
